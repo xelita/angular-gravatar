@@ -26,7 +26,6 @@ var myapp = angular.module('myapp', ['gravatarModule']);
 
 ```javascript
 TODO
-};
 ```
 
 or
