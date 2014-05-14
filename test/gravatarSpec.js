@@ -69,4 +69,75 @@ describe("gravatarModule Tests Suite", function () {
             expect(gravatarConstants.ratings.x).toBe('x');
         });
     });
+
+    // gravatarService
+
+    describe("gravatarService Tests", function () {
+
+        var gravatarService;
+        var gravatarConstants;
+
+        beforeEach(function () {
+            module('gravatarModule');
+            inject(function (_gravatarService_, _gravatarConstants_) {
+                gravatarService = _gravatarService_;
+                gravatarConstants = _gravatarConstants_;
+            });
+        });
+
+        it("apiVersion should return apiVersion defined in gravatarConstants", function () {
+            expect(gravatarService.apiVersion()).toBe('1.0.0');
+        });
+
+        it("email hash relies on md5", function () {
+            expect(gravatarService.emailHash(' JOHN.DOE@unknown.com ')).toBe('6c320be9a7a04782bd10dd04f81ddab6');
+        });
+
+        it("image url from email should relies on image url from email hash once email has been hashed", function () {
+            spyOn(gravatarService, 'getImageUrlFromEmailHash');
+
+            var gravatarConfig = {
+                ssl: true,
+                ext: 'png',
+                size: 200,
+                defaultImage: 'mm',
+                forceDefaultImage: true,
+                rating: 'g'
+            };
+            gravatarService.getImageUrlFromEmail(' JOHN.DOE@unknown.com', gravatarConfig);
+            expect(gravatarService.getImageUrlFromEmailHash).toHaveBeenCalledWith('6c320be9a7a04782bd10dd04f81ddab6', gravatarConfig);
+        });
+
+        it("image url from email hash should return valid Gravatar url", function () {
+            var gravatarConfig = {
+            };
+
+            var url = gravatarService.getImageUrlFromEmailHash('6c320be9a7a04782bd10dd04f81ddab6', gravatarConfig);
+            expect(url).toBe('http://www.gravatar.com/avatar/6c320be9a7a04782bd10dd04f81ddab6?');
+
+            gravatarConfig.ssl = true;
+            url = gravatarService.getImageUrlFromEmailHash('6c320be9a7a04782bd10dd04f81ddab6', gravatarConfig);
+            expect(url).toBe('https://secure.gravatar.com/avatar/6c320be9a7a04782bd10dd04f81ddab6?');
+
+            gravatarConfig.ext = 'png';
+            url = gravatarService.getImageUrlFromEmailHash('6c320be9a7a04782bd10dd04f81ddab6', gravatarConfig);
+            expect(url).toBe('https://secure.gravatar.com/avatar/6c320be9a7a04782bd10dd04f81ddab6.png?');
+
+            gravatarConfig.size = '200';
+            url = gravatarService.getImageUrlFromEmailHash('6c320be9a7a04782bd10dd04f81ddab6', gravatarConfig);
+            expect(url).toBe('https://secure.gravatar.com/avatar/6c320be9a7a04782bd10dd04f81ddab6.png?s=200&');
+
+            gravatarConfig.defaultImage = 'mm';
+            url = gravatarService.getImageUrlFromEmailHash('6c320be9a7a04782bd10dd04f81ddab6', gravatarConfig);
+            expect(url).toBe('https://secure.gravatar.com/avatar/6c320be9a7a04782bd10dd04f81ddab6.png?s=200&d=mm&');
+
+            gravatarConfig.forceDefaultImage = true;
+            url = gravatarService.getImageUrlFromEmailHash('6c320be9a7a04782bd10dd04f81ddab6', gravatarConfig);
+            expect(url).toBe('https://secure.gravatar.com/avatar/6c320be9a7a04782bd10dd04f81ddab6.png?s=200&d=mm&f=y&');
+
+            gravatarConfig.rating = 'g';
+            url = gravatarService.getImageUrlFromEmailHash('6c320be9a7a04782bd10dd04f81ddab6', gravatarConfig);
+            expect(url).toBe('https://secure.gravatar.com/avatar/6c320be9a7a04782bd10dd04f81ddab6.png?s=200&d=mm&f=y&r=g&');
+        });
+    });
 });

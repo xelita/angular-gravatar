@@ -51,21 +51,12 @@ gravatarModule.factory('gravatarService', ['$rootScope', '$log', '$http', 'grava
 
         /**
          * Get the given email hash.
-         * The url is tweaked with config object. An example of this object is:
-         *  {
-         *      ssl: true,
-         *      ext: 'png',
-         *      size: 200,
-         *      default: 'mm',
-         *      force: true,
-         *      rating: 'g'
-         *  }
          * For more information: http://en.gravatar.com/site/implement/hash/
          * @param email the email to hash
          * @returns {*}
          */
         emailHash: function (email) {
-            $log.debug('IN gravatarService.apiVersion.');
+            $log.debug('IN gravatarService.emailHash.');
             return md5(email.trim().toLowerCase());
         },
 
@@ -85,9 +76,9 @@ gravatarModule.factory('gravatarService', ['$rootScope', '$log', '$http', 'grava
          * @param config
          * @returns string Gravatar url
          */
-        getImageFromEmail: function (email, config) {
+        getImageUrlFromEmail: function (email, config) {
             $log.debug('IN gravatarService.getImageFromEmail.');
-            return this.getImageFromHash(this.emailHash(email), config);
+            return this.getImageUrlFromEmailHash(this.emailHash(email), config);
         },
 
         /**
@@ -106,8 +97,8 @@ gravatarModule.factory('gravatarService', ['$rootScope', '$log', '$http', 'grava
          * @param config
          * @returns string Gravatar url
          */
-        getImageFromHash: function (emailHash, config) {
-            $log.debug('IN gravatarService.getImageFromHash.');
+        getImageUrlFromEmailHash: function (emailHash, config) {
+            $log.debug('IN gravatarService.getImageUrlFromEmailHash.');
 
             // Use HTTP connection by default
             var gravatarUrl = gravatarConstants.urls.http + '/' + emailHash;
@@ -216,7 +207,7 @@ gravatarModule.directive('gravatarImage', function ($log, gravatarService) {
                 $log.debug('Gravatar configuration: ' + angular.toJson(gravatarConfig));
 
                 // Calling Gravatar service
-                var gravatarUrl = gravatarService.getImageFromHash(emailHash, gravatarConfig);
+                var gravatarUrl = gravatarService.getImageUrlFromEmailHash(emailHash, gravatarConfig);
                 element.attr('src', gravatarUrl);
             };
 
