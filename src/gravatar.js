@@ -150,14 +150,6 @@ gravatarModule.factory('gravatarService', ['$rootScope', '$log', '$http', 'grava
 
 /**
  * Directive responsible for display Gravatar image.
- *  {
-         *      ssl: true,
-         *      ext: 'png',
-         *      size: 200,
-         *      default: 'mm',
-         *      force: true,
-         *      rating: 'g'
-         *  }
  */
 gravatarModule.directive('gravatarImage', function ($log, gravatarService) {
     return {
