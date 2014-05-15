@@ -207,6 +207,27 @@ gravatarModule.directive('gravatarImage', function ($log, gravatarService) {
             scope.$watch('email', function () {
                 gravatarInitFunction();
             });
+            scope.$watch('emailHash', function () {
+                gravatarInitFunction();
+            });
+            scope.$watch('ssl', function () {
+                gravatarInitFunction();
+            });
+            scope.$watch('ext', function () {
+                gravatarInitFunction();
+            });
+            scope.$watch('size', function () {
+                gravatarInitFunction();
+            });
+            scope.$watch('defaultImage', function () {
+                gravatarInitFunction();
+            });
+            scope.$watch('forceDefaultImage', function () {
+                gravatarInitFunction();
+            });
+            scope.$watch('rating', function () {
+                gravatarInitFunction();
+            });
         }
     };
 });
