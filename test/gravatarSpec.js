@@ -140,4 +140,160 @@ describe("gravatarModule Tests Suite", function () {
             expect(url).toBe('https://secure.gravatar.com/avatar/6c320be9a7a04782bd10dd04f81ddab6.png?s=200&d=mm&f=y&r=g&');
         });
     });
+
+    // gravatarImage
+
+    describe("gravatarImage Tests", function () {
+
+        var gravatarService;
+        var gravatarConstants;
+
+        var scope;
+        var element;
+
+        beforeEach(function () {
+            module('gravatarModule');
+            inject(function (_gravatarService_, _gravatarConstants_, $rootScope) {
+                gravatarService = _gravatarService_;
+                gravatarConstants = _gravatarConstants_;
+
+                scope = $rootScope.$new();
+            });
+        });
+
+        it("should watch email", function () {
+            inject(function ($compile) {
+                element = $compile("<gravatar-image email='{{email}}'></gravatar-image>")(scope);
+            });
+
+            scope.email = 'john.doe@unknown.com';
+            scope.$digest();
+
+            expect(element.prop("tagName")).toBe('IMG');
+            expect(element.attr("email")).toBe('john.doe@unknown.com');
+            expect(element.attr("src")).toBe('http://www.gravatar.com/avatar/6c320be9a7a04782bd10dd04f81ddab6?');
+        });
+
+        it("should watch email hash", function () {
+            inject(function ($compile) {
+                element = $compile("<gravatar-image email-hash='{{emailHash}}'></gravatar-image>")(scope);
+            });
+
+            scope.emailHash = '6c320be9a7a04782bd10dd04f81ddab6';
+            scope.$digest();
+
+            expect(element.prop("tagName")).toBe('IMG');
+            expect(element.attr("email-hash")).toBe('6c320be9a7a04782bd10dd04f81ddab6');
+            expect(element.attr("src")).toBe('http://www.gravatar.com/avatar/6c320be9a7a04782bd10dd04f81ddab6?');
+        });
+
+        it("should watch ssl", function () {
+            inject(function ($compile) {
+                element = $compile("<gravatar-image email='{{email}}' ssl='{{ssl}}'></gravatar-image>")(scope);
+            });
+
+            scope.email = 'john.doe@unknown.com';
+            scope.ssl = 'true';
+            scope.$digest();
+
+            expect(element.prop("tagName")).toBe('IMG');
+            expect(element.attr("email")).toBe('john.doe@unknown.com');
+            expect(element.attr("ssl")).toBe('true');
+            expect(element.attr("src")).toBe('https://secure.gravatar.com/avatar/6c320be9a7a04782bd10dd04f81ddab6?');
+        });
+
+        it("should watch ext", function () {
+            inject(function ($compile) {
+                element = $compile("<gravatar-image email='{{email}}' ssl='{{ssl}}' ext='{{ext}}'></gravatar-image>")(scope);
+            });
+
+            scope.email = 'john.doe@unknown.com';
+            scope.ssl = 'true';
+            scope.ext = 'png';
+            scope.$digest();
+
+            expect(element.prop("tagName")).toBe('IMG');
+            expect(element.attr("email")).toBe('john.doe@unknown.com');
+            expect(element.attr("ssl")).toBe('true');
+            expect(element.attr("src")).toBe('https://secure.gravatar.com/avatar/6c320be9a7a04782bd10dd04f81ddab6.png?');
+        });
+
+        it("should watch size", function () {
+            inject(function ($compile) {
+                element = $compile("<gravatar-image email='{{email}}' ssl='{{ssl}}' ext='{{ext}}' size='{{size}}'></gravatar-image>")(scope);
+            });
+
+            scope.email = 'john.doe@unknown.com';
+            scope.ssl = 'true';
+            scope.ext = 'png';
+            scope.size = '200';
+            scope.$digest();
+
+            expect(element.prop("tagName")).toBe('IMG');
+            expect(element.attr("email")).toBe('john.doe@unknown.com');
+            expect(element.attr("ssl")).toBe('true');
+            expect(element.attr("size")).toBe('200');
+            expect(element.attr("src")).toBe('https://secure.gravatar.com/avatar/6c320be9a7a04782bd10dd04f81ddab6.png?s=200&');
+        });
+
+        it("should watch default image", function () {
+            inject(function ($compile) {
+                element = $compile("<gravatar-image email='{{email}}' ssl='{{ssl}}' ext='{{ext}}' size='{{size}}' default-image='{{defaultImage}}'></gravatar-image>")(scope);
+            });
+
+            scope.email = 'john.doe@unknown.com';
+            scope.ssl = 'true';
+            scope.ext = 'png';
+            scope.size = '200';
+            scope.defaultImage = gravatarConstants.images.notfound;
+            scope.$digest();
+
+            expect(element.prop("tagName")).toBe('IMG');
+            expect(element.attr("email")).toBe('john.doe@unknown.com');
+            expect(element.attr("ssl")).toBe('true');
+            expect(element.attr("size")).toBe('200');
+            expect(element.attr("src")).toBe('https://secure.gravatar.com/avatar/6c320be9a7a04782bd10dd04f81ddab6.png?s=200&d=404&');
+        });
+
+        it("should watch force default image", function () {
+            inject(function ($compile) {
+                element = $compile("<gravatar-image email='{{email}}' ssl='{{ssl}}' ext='{{ext}}' size='{{size}}' default-image='{{defaultImage}}' force-default-image='{{forceDefaultImage}}'></gravatar-image>")(scope);
+            });
+
+            scope.email = 'john.doe@unknown.com';
+            scope.ssl = 'true';
+            scope.ext = 'png';
+            scope.size = '200';
+            scope.defaultImage = gravatarConstants.images.notfound;
+            scope.forceDefaultImage = true;
+            scope.$digest();
+
+            expect(element.prop("tagName")).toBe('IMG');
+            expect(element.attr("email")).toBe('john.doe@unknown.com');
+            expect(element.attr("ssl")).toBe('true');
+            expect(element.attr("size")).toBe('200');
+            expect(element.attr("src")).toBe('https://secure.gravatar.com/avatar/6c320be9a7a04782bd10dd04f81ddab6.png?s=200&d=404&f=y&');
+        });
+
+        it("should watch rating", function () {
+            inject(function ($compile) {
+                element = $compile("<gravatar-image email='{{email}}' ssl='{{ssl}}' ext='{{ext}}' size='{{size}}' default-image='{{defaultImage}}' force-default-image='{{forceDefaultImage}}' rating='{{rating}}'></gravatar-image>")(scope);
+            });
+
+            scope.email = 'john.doe@unknown.com';
+            scope.ssl = 'true';
+            scope.ext = 'png';
+            scope.size = '200';
+            scope.defaultImage = gravatarConstants.images.notfound;
+            scope.forceDefaultImage = true;
+            scope.rating = gravatarConstants.ratings.g;
+            scope.$digest();
+
+            expect(element.prop("tagName")).toBe('IMG');
+            expect(element.attr("email")).toBe('john.doe@unknown.com');
+            expect(element.attr("ssl")).toBe('true');
+            expect(element.attr("size")).toBe('200');
+            expect(element.attr("src")).toBe('https://secure.gravatar.com/avatar/6c320be9a7a04782bd10dd04f81ddab6.png?s=200&d=404&f=y&r=g&');
+        });
+    });
 });
