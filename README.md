@@ -24,6 +24,19 @@ var myapp = angular.module('myapp', ['gravatarModule']);
 
 + Use the gravatarService as controller dependencies and call gravatarService API:
 
+Generating VCard url do be downloaded is really easy!
+
+```javascript
+$scope.gravatarProfileVCardUrl = function () {
+    var gravatarConfig = {
+        ssl: true
+    };
+    return gravatarService.getProfileVCardUrlFromEmail('john.doe@unknown.com');
+}
+```
+
+Generating Gravatar image url to display is easy too!
+
 ```javascript
 $scope.gravatarUrl = function () {
     var gravatarConfig = {
@@ -40,7 +53,7 @@ $scope.gravatarUrl = function () {
 
 or
 
-+ Use the gravatarImage directive to display Gravatars in your application:
++ Use the gravatarImage directive to display Gravatar images in your application:
 
 ```html
 <gravatar-image email={{your_email}} />

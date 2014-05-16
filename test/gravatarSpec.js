@@ -17,12 +17,20 @@ describe("gravatarModule Tests Suite", function () {
             expect(gravatarConstants.apiVersion).toBe('1.0.0');
         });
 
-        it("http url", function () {
-            expect(gravatarConstants.urls.http).toBe('http://www.gravatar.com/avatar');
+        it("avatar http url", function () {
+            expect(gravatarConstants.urls.avatar.http).toBe('http://www.gravatar.com/avatar');
         });
 
-        it("https url", function () {
-            expect(gravatarConstants.urls.https).toBe('https://secure.gravatar.com/avatar');
+        it("avatar https url", function () {
+            expect(gravatarConstants.urls.avatar.https).toBe('https://secure.gravatar.com/avatar');
+        });
+
+        it("profile http url", function () {
+            expect(gravatarConstants.urls.profile.http).toBe('http://www.gravatar.com');
+        });
+
+        it("profile https url", function () {
+            expect(gravatarConstants.urls.profile.https).toBe('https://secure.gravatar.com');
         });
 
         it("images notfound", function () {
@@ -93,7 +101,7 @@ describe("gravatarModule Tests Suite", function () {
             expect(gravatarService.emailHash(' JOHN.DOE@unknown.com ')).toBe('6c320be9a7a04782bd10dd04f81ddab6');
         });
 
-        it("image url from email should relies on image url from email hash once email has been hashed", function () {
+        it("image url from email should delegate call to image url with hashed email function", function () {
             spyOn(gravatarService, 'getImageUrlFromEmailHash');
 
             var gravatarConfig = {
@@ -108,7 +116,7 @@ describe("gravatarModule Tests Suite", function () {
             expect(gravatarService.getImageUrlFromEmailHash).toHaveBeenCalledWith('6c320be9a7a04782bd10dd04f81ddab6', gravatarConfig);
         });
 
-        it("image url from email hash should return valid Gravatar url", function () {
+        it("image url from hashed email should return valid Gravatar image url", function () {
             var gravatarConfig = {
             };
 
@@ -138,6 +146,28 @@ describe("gravatarModule Tests Suite", function () {
             gravatarConfig.rating = 'g';
             url = gravatarService.getImageUrlFromEmailHash('6c320be9a7a04782bd10dd04f81ddab6', gravatarConfig);
             expect(url).toBe('https://secure.gravatar.com/avatar/6c320be9a7a04782bd10dd04f81ddab6.png?s=200&d=mm&f=y&r=g&');
+        });
+
+        it("profile url from email should delegate call to profile url with hashed email function", function () {
+            spyOn(gravatarService, 'getProfileVCardUrlFromEmailHash');
+
+            var gravatarConfig = {
+                ssl: true
+            };
+            gravatarService.getProfileVCardUrlFromEmail(' JOHN.DOE@unknown.com', gravatarConfig);
+            expect(gravatarService.getProfileVCardUrlFromEmailHash).toHaveBeenCalledWith('6c320be9a7a04782bd10dd04f81ddab6', gravatarConfig);
+        });
+
+        it("profile url from hashed email should return valid Gravatar profile url", function () {
+            var gravatarConfig = {
+            };
+
+            var url = gravatarService.getProfileVCardUrlFromEmailHash('6c320be9a7a04782bd10dd04f81ddab6', gravatarConfig);
+            expect(url).toBe('http://www.gravatar.com/6c320be9a7a04782bd10dd04f81ddab6.vcf');
+
+            gravatarConfig.ssl = true;
+            url = gravatarService.getProfileVCardUrlFromEmailHash('6c320be9a7a04782bd10dd04f81ddab6', gravatarConfig);
+            expect(url).toBe('https://secure.gravatar.com/6c320be9a7a04782bd10dd04f81ddab6.vcf');
         });
     });
 

@@ -12,8 +12,14 @@ var gravatarModule = angular.module('gravatarModule', []);
 gravatarModule.constant('gravatarConstants', {
     apiVersion: '1.0.0',
     urls: {
-        http: 'http://www.gravatar.com/avatar',
-        https: 'https://secure.gravatar.com/avatar'
+        avatar: {
+            http: 'http://www.gravatar.com/avatar',
+            https: 'https://secure.gravatar.com/avatar'
+        },
+        profile: {
+            http: 'http://www.gravatar.com',
+            https: 'https://secure.gravatar.com'
+        }
     },
     images: {
         notfound: '404',
@@ -61,7 +67,7 @@ gravatarModule.factory('gravatarService', ['$rootScope', '$log', '$http', 'grava
         },
 
         /**
-         * Get the Gravatar url of the user identified by the given email address.
+         * Get the Gravatar image url of the user identified by the given email address.
          * The url is tweaked with config object. An example of this object is:
          *  {
          *      ssl: true,
@@ -74,7 +80,7 @@ gravatarModule.factory('gravatarService', ['$rootScope', '$log', '$http', 'grava
          * For more information: http://en.gravatar.com/site/implement/images/
          * @param email
          * @param config
-         * @returns string Gravatar url
+         * @returns string Gravatar image url
          */
         getImageUrlFromEmail: function (email, config) {
             $log.debug('IN gravatarService.getImageFromEmail.');
@@ -82,7 +88,7 @@ gravatarModule.factory('gravatarService', ['$rootScope', '$log', '$http', 'grava
         },
 
         /**
-         * Get the Gravatar url of the user identified by the given hashed email address.
+         * Get the Gravatar image url of the user identified by the given hashed email address.
          * The url is tweaked with config object. An example of this object is:
          *  {
          *      ssl: true,
@@ -95,20 +101,20 @@ gravatarModule.factory('gravatarService', ['$rootScope', '$log', '$http', 'grava
          * For more information: http://en.gravatar.com/site/implement/images/
          * @param emailHash
          * @param config
-         * @returns string Gravatar url
+         * @returns string Gravatar image url
          */
         getImageUrlFromEmailHash: function (emailHash, config) {
             $log.debug('IN gravatarService.getImageUrlFromEmailHash.');
 
             // Use HTTP connection by default
-            var gravatarUrl = gravatarConstants.urls.http + '/' + emailHash;
+            var gravatarUrl = gravatarConstants.urls.avatar.http + '/' + emailHash;
 
             if (config) {
                 $log.debug('Gravatar configuration: ' + angular.toJson(config));
 
                 // SSL mode => Use the HTTPS connection
                 if (config.ssl === true) {
-                    gravatarUrl = gravatarConstants.urls.https + '/' + emailHash;
+                    gravatarUrl = gravatarConstants.urls.avatar.https + '/' + emailHash;
                 }
 
                 // Adding file-type extension
@@ -140,7 +146,56 @@ gravatarModule.factory('gravatarService', ['$rootScope', '$log', '$http', 'grava
                 }
             }
 
-            $log.debug('Gravatar url is: ' + gravatarUrl);
+            $log.debug('Gravatar image url is: ' + gravatarUrl);
+            return gravatarUrl;
+        },
+
+        /**
+         * Get the Gravatar profile url of the user identified by the given email address.
+         * The url is tweaked with config object. An example of this object is:
+         *  {
+         *      ssl: true,
+         *  }
+         * For more information: https://en.gravatar.com/site/implement/profiles/
+         * @param email
+         * @param config
+         * @returns string Gravatar profile url
+         */
+        getProfileVCardUrlFromEmail: function (email, config) {
+            $log.debug('IN gravatarService.getProfileVCardUrlFromEmail.');
+            return this.getProfileVCardUrlFromEmailHash(this.emailHash(email), config);
+        },
+
+        /**
+         * Get the Gravatar profile url of the user identified by the given hashed email address.
+         * The url is tweaked with config object. An example of this object is:
+         *  {
+         *      ssl: true,
+         *  }
+         * For more information: https://en.gravatar.com/site/implement/profiles/
+         * @param emailHash
+         * @param config
+         * @returns string Gravatar profile url
+         */
+        getProfileVCardUrlFromEmailHash: function (emailHash, config) {
+            $log.debug('IN gravatarService.getProfileVCardUrlFromEmailHash.');
+
+            // Use HTTP connection by default
+            var gravatarUrl = gravatarConstants.urls.profile.http + '/' + emailHash;
+
+            if (config) {
+                $log.debug('Gravatar configuration: ' + angular.toJson(config));
+
+                // SSL mode => Use the HTTPS connection
+                if (config.ssl === true) {
+                    gravatarUrl = gravatarConstants.urls.profile.https + '/' + emailHash;
+                }
+            }
+
+            // Append vcf extension to url
+            gravatarUrl += '.vcf';
+
+            $log.debug('Gravatar profile url is: ' + gravatarUrl);
             return gravatarUrl;
         }
     };
