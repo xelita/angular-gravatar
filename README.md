@@ -24,21 +24,29 @@ var myapp = angular.module('myapp', ['gravatarModule']);
 
 + Use the gravatarService as controller dependencies and call gravatarService API:
 
-Generating VCard url do be downloaded is really easy!
+Obtaining [Gravatar Profile Data](http://en.gravatar.com/site/implement/profiles/json/) through HTTP is a breeze...
 
 ```javascript
-$scope.gravatarProfileVCardUrl = function () {
-    var gravatarConfig = {
-        ssl: true
-    };
-    return gravatarService.getProfileVCardUrlFromEmail('john.doe@unknown.com');
+$scope.loadJohnDoeProfile = function () {
+    gravatarService.getProfileFromEmail('john.doe@unknown.com', {ssl: true}).then(function(result){
+        // Use data here!
+        var profile = result.data;
+    });
 }
 ```
 
-Generating Gravatar image url to display is easy too!
+Obtaining [Gravatar VCard Url](https://en.gravatar.com/site/implement/profiles/) do be downloaded is really easy...
 
 ```javascript
-$scope.gravatarUrl = function () {
+$scope.johnDoeGravatarProfileVCardUrl = function () {
+    return gravatarService.getProfileVCardUrlFromEmail('john.doe@unknown.com', {ssl: true});
+}
+```
+
+Obtaining [Gravatar Image Url](http://en.gravatar.com/site/implement/images/) to be displayed is easy too!
+
+```javascript
+$scope.johnDoeGravatarImageUrl = function () {
     var gravatarConfig = {
         ssl: true,
         ext: 'png',
@@ -47,13 +55,13 @@ $scope.gravatarUrl = function () {
         forceDefaultImage: true,
         rating: 'g'
     };
-    return gravatarService.getImageUrlFromEmail('john.doe@unknown.com');
+    return gravatarService.getImageUrlFromEmail('john.doe@unknown.com', gravatarConfig);
 }
 ```
 
 or
 
-+ Use the gravatarImage directive to display Gravatar images in your application:
++ Use the gravatarImage directive to display a [Gravatar Image](http://en.gravatar.com/site/implement/images/) in your application:
 
 ```html
 <gravatar-image email={{your_email}} />
@@ -63,7 +71,7 @@ or
 
 ### gravatar-image directive
 
-In your template file, Gravatar directive can be used and configured like this:
+In your template file, 'gravatarImage' directive can be used and configured like this:
 
 ```html
 <gravatar-image 

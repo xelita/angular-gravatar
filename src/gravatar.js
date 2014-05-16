@@ -195,8 +195,64 @@ gravatarModule.factory('gravatarService', ['$rootScope', '$log', '$http', 'grava
             // Append vcf extension to url
             gravatarUrl += '.vcf';
 
-            $log.debug('Gravatar profile url is: ' + gravatarUrl);
+            $log.debug('Gravatar profile vcf url is: ' + gravatarUrl);
             return gravatarUrl;
+        },
+
+        /**
+         * Get the Gravatar profile data of the user identified by the given hashed email address.
+         * The url is tweaked with config object. An example of this object is:
+         *  {
+         *      ssl: true,
+         *  }
+         * For more information: http://en.gravatar.com/site/implement/profiles/json/
+         * @param email
+         * @param config
+         * @param callback
+         * @returns {HttpPromise}
+         */
+        getProfileFromEmail: function (email, config, callback) {
+            $log.debug('IN gravatarService.getProfileFromEmail.');
+            return this.getProfileFromEmailHash(this.emailHash(email), config, callback);
+        },
+
+        /**
+         * Get the Gravatar profile data of the user identified by the given hashed email address.
+         * The url is tweaked with config object. An example of this object is:
+         *  {
+         *      ssl: true,
+         *  }
+         * For more information: http://en.gravatar.com/site/implement/profiles/json/
+         * @param emailHash
+         * @param config
+         * @param callback
+         * @returns {HttpPromise}
+         */
+        getProfileFromEmailHash: function (emailHash, config, callback) {
+            $log.debug('IN gravatarService.getProfileFromEmailHash.');
+
+            // Use HTTP connection by default
+            var gravatarUrl = gravatarConstants.urls.profile.http + '/' + emailHash;
+
+            if (config) {
+                $log.debug('Gravatar configuration: ' + angular.toJson(config));
+
+                // SSL mode => Use the HTTPS connection
+                if (config.ssl === true) {
+                    gravatarUrl = gravatarConstants.urls.profile.https + '/' + emailHash;
+                }
+            }
+
+            // Append JSON extension to url
+            gravatarUrl += '.json';
+
+            // Append callback extension if needed
+            if (callback) {
+                gravatarUrl += '?callback=' + callback;
+            }
+
+            $log.debug('Gravatar profile url is: ' + gravatarUrl);
+            return $http.get(gravatarUrl);
         }
     };
 }]);

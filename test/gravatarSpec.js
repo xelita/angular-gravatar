@@ -85,11 +85,14 @@ describe("gravatarModule Tests Suite", function () {
         var gravatarService;
         var gravatarConstants;
 
+        var $httpBackend;
+
         beforeEach(function () {
             module('gravatarModule');
-            inject(function (_gravatarService_, _gravatarConstants_) {
+            inject(function (_gravatarService_, _gravatarConstants_, _$httpBackend_) {
                 gravatarService = _gravatarService_;
                 gravatarConstants = _gravatarConstants_;
+                $httpBackend = _$httpBackend_;
             });
         });
 
@@ -168,6 +171,32 @@ describe("gravatarModule Tests Suite", function () {
             gravatarConfig.ssl = true;
             url = gravatarService.getProfileVCardUrlFromEmailHash('6c320be9a7a04782bd10dd04f81ddab6', gravatarConfig);
             expect(url).toBe('https://secure.gravatar.com/6c320be9a7a04782bd10dd04f81ddab6.vcf');
+        });
+
+        it("profile data from email should delegate call to profile data with hashed email function", function () {
+            spyOn(gravatarService, 'getProfileFromEmailHash');
+
+            var gravatarConfig = {
+                ssl: true
+            };
+            var callback = 'alert';
+
+            gravatarService.getProfileFromEmail(' JOHN.DOE@unknown.com', gravatarConfig, callback);
+            expect(gravatarService.getProfileFromEmailHash).toHaveBeenCalledWith('6c320be9a7a04782bd10dd04f81ddab6', gravatarConfig, callback);
+        });
+
+        it("profile data from hashed email should return http promise on profile url", function () {
+            var gravatarConfig = {
+            };
+            var callback = 'alert';
+
+            $httpBackend.expectGET('http://www.gravatar.com/6c320be9a7a04782bd10dd04f81ddab6.json').respond({});
+            gravatarService.getProfileFromEmailHash('6c320be9a7a04782bd10dd04f81ddab6', gravatarConfig);
+            $httpBackend.flush();
+
+            $httpBackend.expectGET('http://www.gravatar.com/6c320be9a7a04782bd10dd04f81ddab6.json?callback=alert').respond({});
+            gravatarService.getProfileFromEmailHash('6c320be9a7a04782bd10dd04f81ddab6', gravatarConfig, callback);
+            $httpBackend.flush();
         });
     });
 
